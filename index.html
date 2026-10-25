@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Reading the Room | ICRA 2027</title>
+  <meta name="description" content="Reading the Room registers scale-ambiguous, sparse VSLAM maps to floor plans of partially built construction sites with a single robust, class-balanced semantic-geometric energy function.">
+  <meta name="keywords" content="VSLAM, floor plan registration, construction robotics, semantic registration, scale-ambiguous registration, RoMa, cross-modal matching">
+  <meta name="author" content="Bjorn Stragier, Emilia Szymańska, J. Micah Prendergast, Lukas Rosenberger Schmid">
+  <meta name="theme-color" content="#1e3a5f">
+
+  <!-- Open Graph / social previews.
+       TODO: once hosted, replace https://btstragier.github.io/reading-the-room-project-page below with the real URL, e.g. https://<user>.github.io/reading-the-room/ -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Reading the Room: Scale-ambiguous Semantic Registration of Sparse VSLAM Maps to Floor Plans in Partially Built Environments">
+  <meta property="og:description" content="Registering sparse, scale-ambiguous VSLAM maps to floor plans of partially built construction sites.">
+  <meta property="og:url" content="https://btstragier.github.io/reading-the-room-project-page">
+  <meta property="og:image" content="https://btstragier.github.io/reading-the-room-project-page/static/images/social_preview.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://btstragier.github.io/reading-the-room-project-page/static/images/social_preview.png">
+
+  <!-- Google Scholar -->
+  <meta name="citation_title" content="Reading the Room: Scale-ambiguous Semantic Registration of Sparse VSLAM Maps to Floor Plans in Partially Built Environments">
+  <meta name="citation_author" content="Stragier, Bjorn">
+  <meta name="citation_author" content="Szymańska, Emilia">
+  <meta name="citation_author" content="Prendergast, J. Micah">
+  <meta name="citation_author" content="Schmid, Lukas Rosenberger">
+  <meta name="citation_publication_date" content="2026/10/21">
+  <meta name="citation_arxiv_id" content="2610.29647">
+  <meta name="citation_pdf_url" content="https://btstragier.github.io/reading-the-room-project-page/static/pdfs/paper.pdf">
+
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link rel="apple-touch-icon" href="static/images/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.4/css/academicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+</head>
+<body>
+
+<button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+  <i class="fas fa-chevron-up"></i>
+</button>
+
+<main id="main-content">
+
+<!-- ============================== Header ============================== -->
+<header class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop has-text-centered">
+      <p class="venue-tag">ICRA 2027 &middot; under review</p>
+      <h1 class="publication-title">Reading the Room</h1>
+      <h2 class="publication-subtitle">Scale-ambiguous Semantic Registration of Sparse VSLAM Maps to Floor Plans in Partially Built Environments</h2>
+
+      <div class="publication-authors">
+        <span class="author-block"><a href="https://www.linkedin.com/in/bj%C3%B6rn-stragier-a0b523232/" target="_blank" rel="noopener">Bjorn Stragier</a><sup>1</sup></span>
+        <span class="author-block"><a href="https://scholar.google.com/citations?user=vxENFQkAAAAJ&amp;hl=pl" target="_blank" rel="noopener">Emilia Szymańska</a><sup>2</sup></span>
+        <span class="author-block"><a href="https://scholar.google.com/citations?user=ZmeJd9IAAAAJ&amp;hl=en" target="_blank" rel="noopener">J. Micah Prendergast</a><sup>1</sup></span>
+        <span class="author-block"><a href="https://scholar.google.com/citations?user=r79fGI0AAAAJ&amp;hl=en" target="_blank" rel="noopener">Lukas Rosenberger Schmid</a><sup>3</sup></span>
+      </div>
+      <div class="publication-affiliations">
+        <span><sup>1</sup>Cognitive Robotics, TU Delft</span>
+        <span><sup>2</sup>Hilti AG</span>
+        <span><sup>3</sup>Machine Intelligence Group, UTN</span>
+      </div>
+
+      <div class="publication-links">
+        <a href="https://arxiv.org/abs/2610.29647" target="_blank" class="button is-rounded is-dark">
+          <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
+        </a>
+        <a href="#BibTeX" class="button is-rounded is-dark">
+          <span class="icon"><i class="fas fa-quote-right"></i></span><span>BibTeX</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================== Teaser ============================== -->
+<section class="section teaser" id="teaser">
+  <div class="container is-max-desktop">
+    <figure class="figure">
+      <img src="static/images/results_overview.webp" class="zoomable" alt="Overall mean and median ATE for all methods, correspondence-based and anchor-based settings" width="2000" height="953">
+      <figcaption>
+        <strong>Figure 1.</strong> Overall trajectory error across all 33 sequences. Without any user input, Reading
+        the Room cuts the median ATE from 19.9&nbsp;m (strongest baseline) to 4.3&nbsp;m. With a single user click as an
+        anchor, it drops to 1.9&nbsp;m, approaching the 0.85&nbsp;m oracle lower bound. Labels show recall at 1/3/5&nbsp;m.
+        SIFT+RANSAC succeeded on only 1 of the 33 runs and region decomposition on 10, so their bars cover only those runs.
+      </figcaption>
+    </figure>
+
+    <div class="tldr">
+      <p>
+        <span class="tldr-label">TL;DR</span>
+        A cheap 360&deg; camera walk-through gives you a sparse VSLAM map, but no scale and no idea where it sits in
+        the building. We register it to the floor plan by optimizing a <em>single</em> robust,
+        class-balanced semantic energy, initialized either from one rough user-marked point or fully
+        automatically with a fine-tuned cross-modal matcher.
+      </p>
+    </div>
+
+    <div class="challenges columns is-multiline is-mobile">
+      <div class="column is-half-mobile is-one-quarter-tablet challenge">
+        <i class="fas fa-ruler-combined"></i>
+        <h4>Unknown scale</h4>
+        <p>Monocular VSLAM is only defined up to a similarity transform.</p>
+      </div>
+      <div class="column is-half-mobile is-one-quarter-tablet challenge">
+        <i class="fas fa-shapes"></i>
+        <h4>Cross-modal</h4>
+        <p>A sparse, noisy point cloud vs. a symbolic drawing.</p>
+      </div>
+      <div class="column is-half-mobile is-one-quarter-tablet challenge">
+        <i class="fas fa-hard-hat"></i>
+        <h4>Partially built</h4>
+        <p>Much of the plan does not physically exist yet.</p>
+      </div>
+      <div class="column is-half-mobile is-one-quarter-tablet challenge">
+        <i class="fas fa-clone"></i>
+        <h4>Repetitive</h4>
+        <p>Walls, columns and voids: few distinctive features.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== Key numbers ============================== -->
+<section class="section stats-section">
+  <div class="container is-max-desktop">
+    <div class="columns is-mobile is-multiline stats">
+      <div class="column is-half-mobile is-one-quarter-tablet stat">
+        <span class="stat-value">33</span>
+        <span class="stat-label">sequences on 3 active construction sites</span>
+      </div>
+      <div class="column is-half-mobile is-one-quarter-tablet stat">
+        <span class="stat-value">4.6&times;</span>
+        <span class="stat-label">lower median ATE than the strongest baseline, no anchor</span>
+      </div>
+      <div class="column is-half-mobile is-one-quarter-tablet stat">
+        <span class="stat-value">1.89&nbsp;m</span>
+        <span class="stat-label">median ATE with a single user-marked anchor</span>
+      </div>
+      <div class="column is-half-mobile is-one-quarter-tablet stat">
+        <span class="stat-value">~1.5&nbsp;s</span>
+        <span class="stat-label">end-to-end runtime, automatic mode</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== Abstract ============================== -->
+<section class="section is-shaded">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Abstract</h2>
+    <div class="content abstract">
+      <p>
+        Many robotic construction applications, such as progress tracking, require registering a sensor
+        trajectory to a prior 2D floor plan. Visual capture is attractive for its low cost and availability,
+        but aligning a visual simultaneous localization and mapping (VSLAM) map to a floor plan is difficult;
+        VSLAM recovers geometry only up to an unknown similarity transform, the sparse point cloud is
+        cross-modal to the symbolic floor plan, sites are only partially built during capture, and
+        construction sites are visually repetitive, degrading map quality while removing distinctive features.
+        Existing methods address at most two of these challenges. We thus introduce Reading the Room (RR), a
+        global-local approach to register scale-ambiguous, sparse, semantic VSLAM maps to partially built
+        floor plans. Our key idea is to define a single robust, differentiable, class-balanced
+        semantic-geometric energy function that governs all stages of the pipeline. We develop two global
+        initialization schemes, leveraging a single inaccurate user-provided correspondence if provided, or
+        estimating the initialization globally using a cross-modal matching network. Both schemes are
+        designed to find initial candidates with respect to the energy function, which is then directly
+        optimized for local refinement. We evaluate RR on 33 sequences across three active construction
+        sites against classical and learning-based baselines, achieving a 4.5&times; improvement in mean
+        absolute trajectory error over the strongest baseline in the general unconstrained setting, which
+        increases to 7.6&times; when an anchor is provided.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== Method ============================== -->
+<section class="section" id="method">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Method</h2>
+
+    <figure class="figure figure-wide">
+      <img src="static/images/pipeline.webp" class="zoomable" alt="Reading the Room pipeline overview" width="2000" height="603">
+      <figcaption>
+        <strong>Figure 2.</strong> Pipeline overview. The 3D VSLAM map is preprocessed into a bird's-eye-view map.
+        One energy function then drives every later step: global initialization (anchored or
+        correspondence-based) and local refinement.
+      </figcaption>
+    </figure>
+
+    <div class="method-steps">
+      <div class="method-step">
+        <span class="step-num">1</span>
+        <div>
+          <h3>Preprocessing</h3>
+          <p>
+            Gravity is estimated with PCA on the landmark cloud. Floor and ceiling points are removed (keeping the
+            15th&ndash;85th height percentiles), and the rest is projected to a bird's-eye view. This reduces the
+            problem from Sim(3) to Sim(2): scale <em>s</em>, rotation <em>&theta;</em> and translation
+            (<em>t<sub>x</sub></em>, <em>t<sub>y</sub></em>). If the map has no labels, landmarks are labelled
+            <em>wall / window / stairs</em> by projecting them into keyframes segmented with SAM3.
+          </p>
+        </div>
+      </div>
+
+      <div class="method-step">
+        <span class="step-num">2</span>
+        <div>
+          <h3>One energy function</h3>
+          <p>
+            A candidate transform is scored by how close each landmark lands to plan structure <em>of its own
+            class</em>, using a pre-computed per-class distance transform. Residuals are truncated at
+            <em>&tau;</em>, so clutter and unbuilt structure can't dominate. They're Huber-penalized so gradients
+            stay informative, and averaged per class so that rare but distinctive classes like stairs count as
+            much as walls:
+          </p>
+          <div class="equation">
+            $$\mathcal{L}_{\text{sem}} = \frac{1}{|\mathcal{C}|}\sum_{c\in\mathcal{C}}
+            \frac{\sum_{i:\,c(i)=c} w_i\,\rho_\delta\!\left(\min(d_i,\tau)\right)}{\sum_{i:\,c(i)=c} w_i}$$
+          </div>
+          <p>
+            The landmarks are scored against the plan, but not the other way around. That way, walls that haven't
+            been built yet are never penalized for having no landmarks.
+          </p>
+        </div>
+      </div>
+
+      <div class="method-step">
+        <span class="step-num">3</span>
+        <div>
+          <h3>Global initialization</h3>
+          <div class="columns">
+            <div class="column">
+              <p class="init-title"><i class="fas fa-map-pin"></i> Anchored</p>
+              <p>
+                A site manager taps <em>one</em> rough point on the plan. Translation is pinned around it, and
+                20,000 random scale/rotation candidates are scored with the energy. An inaccurate anchor is fine:
+                the robust cost absorbs the error.
+              </p>
+            </div>
+            <div class="column">
+              <p class="init-title"><i class="fas fa-project-diagram"></i> Correspondence-based</p>
+              <p>
+                With no user input, RoMa (initialized from MatchAnything) is fine-tuned on 2,000 synthetic
+                map&ndash;plan pairs generated from 100 drawings. Two-point Umeyama fits on its top matches
+                give the candidates. They're ranked by the energy, not by RANSAC inlier count.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="method-step">
+        <span class="step-num">4</span>
+        <div>
+          <h3>Local refinement</h3>
+          <p>
+            The best candidate is refined jointly over (<em>s</em>, <em>&theta;</em>, <em>t<sub>x</sub></em>,
+            <em>t<sub>y</sub></em>) with L-BFGS, using the closed-form gradient of the same energy function.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="subsection-title">Demonstrations</h3>
+
+    <figure class="figure">
+      <video class="inline-video" controls muted loop playsinline preload="metadata" poster="static/images/demo_anchored_poster.jpg">
+        <source src="static/videos/demo_anchored.mp4" type="video/mp4">
+      </video>
+      <figcaption>
+        <strong>Figure 3.</strong> Anchored global initialization on a Site A sequence. A user marks one rough point on the
+        plan, candidate scales and rotations around it are scored with the energy function, and the best candidate is
+        refined locally. The registered VSLAM trajectory is then shown against the ground truth.
+      </figcaption>
+    </figure>
+
+    <figure class="figure">
+      <video class="inline-video" controls muted loop playsinline preload="metadata" poster="static/images/demo_correspondence_poster.jpg">
+        <source src="static/videos/demo_correspondence.mp4" type="video/mp4">
+      </video>
+      <figcaption>
+        <strong>Figure 4.</strong> Correspondence-based global initialization on the same sequence, with no user input.
+        The fine-tuned matching network proposes dense correspondences between the plan and the sparse map. Candidate
+        transforms fitted to them are scored with the energy function, and the best is refined locally.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============================== Results explorer ============================== -->
+<section class="section is-shaded" id="results">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Results on Real Construction Sites</h2>
+    <p class="section-lead">
+      One representative sequence per site, in increasing order of difficulty. Pick a site to compare the inputs
+      with the strongest learning-based baseline and with both variants of our method. Click any image to
+      enlarge it.
+    </p>
+
+    <div class="site-tabs" role="tablist">
+      <button class="site-tab is-active" role="tab" aria-selected="true" data-site="a">Site A <span>medium</span></button>
+      <button class="site-tab" role="tab" aria-selected="false" data-site="b">Site B <span>advanced</span></button>
+      <button class="site-tab" role="tab" aria-selected="false" data-site="c">Site C <span>hard</span></button>
+    </div>
+
+    <!-- Site A -->
+    <div class="site-panel is-active" id="site-a" role="tabpanel">
+      <ul class="site-meta">
+        <li><i class="fas fa-map-marker-alt"></i> Switzerland</li>
+        <li><i class="fas fa-layer-group"></i> 19 sequences, 9 floors</li>
+      </ul>
+      <div class="inputs-row">
+        <figure><img src="static/images/site_a_input_bev.webp" class="zoomable" alt="Site A: VSLAM BEV map" loading="lazy"><figcaption>Input: semantic VSLAM map (BEV)</figcaption></figure>
+        <figure><img src="static/images/site_a_input_plan.webp" class="zoomable" alt="Site A: semantic floor plan" loading="lazy"><figcaption>Input: segmented floor plan</figcaption></figure>
+      </div>
+      <div class="compare-row">
+        <figure class="result-card"><span class="badge is-success"><i class="fas fa-check"></i> Success</span><img src="static/images/site_a_baseline.webp" class="zoomable" alt="Site A: RoMa+MatchAnything result" loading="lazy"><figcaption><strong>RoMa + MatchAnything</strong><span>Site median ATE 16.12 m</span></figcaption></figure>
+        <figure class="result-card"><span class="badge is-success"><i class="fas fa-check"></i> Success</span><img src="static/images/site_a_ours.webp" class="zoomable" alt="Site A: Reading the Room (correspondence-based) result" loading="lazy"><figcaption><strong>Ours (automatic)</strong><span>Site median ATE 2.67 m</span></figcaption></figure>
+        <figure class="result-card"><span class="badge is-success"><i class="fas fa-check"></i> Success</span><img src="static/images/site_a_anchor.webp" class="zoomable" alt="Site A: Reading the Room with anchor result" loading="lazy"><figcaption><strong>Ours + anchor</strong><span>Site median ATE 1.41 m</span></figcaption></figure>
+      </div>
+      <p class="site-takeaway">
+        Small floors, high coverage and a distinctive layout. All three methods recover a similar trajectory on
+        this sequence, but across the site's 19 sequences our energy-based initialization and refinement reduce
+        the median error by about 6&times;.
+      </p>
+    </div>
+
+    <!-- Site B -->
+    <div class="site-panel" id="site-b" role="tabpanel" hidden>
+      <ul class="site-meta">
+        <li><i class="fas fa-map-marker-alt"></i> USA</li>
+        <li><i class="fas fa-layer-group"></i> 7 sequences, 2 floors</li>
+      </ul>
+      <div class="inputs-row">
+        <figure><img src="static/images/site_b_input_bev.webp" class="zoomable" alt="Site B: VSLAM BEV map" loading="lazy"><figcaption>Input: semantic VSLAM map (BEV)</figcaption></figure>
+        <figure><img src="static/images/site_b_input_plan.webp" class="zoomable" alt="Site B: semantic floor plan" loading="lazy"><figcaption>Input: segmented floor plan</figcaption></figure>
+      </div>
+      <div class="compare-row">
+        <figure class="result-card"><span class="badge is-failure"><i class="fas fa-times"></i> Failure</span><img src="static/images/site_b_baseline.webp" class="zoomable" alt="Site B: RoMa+MatchAnything result" loading="lazy"><figcaption><strong>RoMa + MatchAnything</strong><span>Site median ATE 42.41 m</span></figcaption></figure>
+        <figure class="result-card"><span class="badge is-success"><i class="fas fa-check"></i> Success</span><img src="static/images/site_b_ours.webp" class="zoomable" alt="Site B: Reading the Room (correspondence-based) result" loading="lazy"><figcaption><strong>Ours (automatic)</strong><span>Site median ATE 1.92 m</span></figcaption></figure>
+        <figure class="result-card"><span class="badge is-success"><i class="fas fa-check"></i> Success</span><img src="static/images/site_b_anchor.webp" class="zoomable" alt="Site B: Reading the Room with anchor result" loading="lazy"><figcaption><strong>Ours + anchor</strong><span>Site median ATE 0.90 m</span></figcaption></figure>
+      </div>
+      <p class="site-takeaway">
+        Self-similar rooms. The baseline collapses the whole map into a few small rooms: the outer walls line up
+        with room walls, which is a low-cost but wrong answer that only arises because scale is unknown. Our
+        method is the only one that succeeds on this site.
+      </p>
+    </div>
+
+    <!-- Site C -->
+    <div class="site-panel" id="site-c" role="tabpanel" hidden>
+      <ul class="site-meta">
+        <li><i class="fas fa-map-marker-alt"></i> USA</li>
+        <li><i class="fas fa-layer-group"></i> 7 sequences, 3 floors</li>
+      </ul>
+      <div class="inputs-row">
+        <figure><img src="static/images/site_c_input_bev.webp" class="zoomable" alt="Site C: VSLAM BEV map" loading="lazy"><figcaption>Input: semantic VSLAM map (BEV)</figcaption></figure>
+        <figure><img src="static/images/site_c_input_plan.webp" class="zoomable" alt="Site C: semantic floor plan" loading="lazy"><figcaption>Input: segmented floor plan</figcaption></figure>
+      </div>
+      <div class="compare-row">
+        <figure class="result-card"><span class="badge is-failure"><i class="fas fa-times"></i> Failure</span><img src="static/images/site_c_baseline.webp" class="zoomable" alt="Site C: RoMa+MatchAnything result" loading="lazy"><figcaption><strong>RoMa + MatchAnything</strong><span>Site median ATE 42.44 m</span></figcaption></figure>
+        <figure class="result-card"><span class="badge is-failure"><i class="fas fa-times"></i> Failure</span><img src="static/images/site_c_ours.webp" class="zoomable" alt="Site C: Reading the Room (correspondence-based) result" loading="lazy"><figcaption><strong>Ours (automatic)</strong><span>Site median ATE 35.04 m</span></figcaption></figure>
+        <figure class="result-card"><span class="badge is-success"><i class="fas fa-check"></i> Success</span><img src="static/images/site_c_anchor.webp" class="zoomable" alt="Site C: Reading the Room with anchor result" loading="lazy"><figcaption><strong>Ours + anchor</strong><span>Site median ATE 4.37 m</span></figcaption></figure>
+      </div>
+      <p class="site-takeaway">
+        Huge floors, only 29% covered, and a symmetric layout. Both automatic methods register the map
+        <em>flipped by 180&deg;</em>. A single rough anchor resolves the symmetry, and our method then recovers
+        a good alignment despite the scale and rotation ambiguity.
+      </p>
+    </div>
+
+    <p class="legend">
+      <span><i class="legend-line is-vslam"></i> VSLAM trajectory</span>
+      <span><i class="legend-line is-gt"></i> ground-truth trajectory</span>
+      <span><i class="legend-dot is-wall"></i> wall</span>
+      <span><i class="legend-dot is-window"></i> window</span>
+      <span><i class="legend-dot is-stairs"></i> stairs</span>
+    </p>
+  </div>
+</section>
+
+<!-- ============================== Quantitative ============================== -->
+<section class="section" id="quantitative">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Quantitative Results</h2>
+    <p class="section-lead">
+      Absolute trajectory error (ATE in metres, lower is better) and recall, the percentage of sequences with
+      ATE below 1/3/5&nbsp;m (higher is better), over all 33 sequences. Best result per setting in <strong>bold</strong>.
+    </p>
+
+    <div class="table-container">
+      <table class="table results-table is-fullwidth">
+        <thead>
+          <tr>
+            <th rowspan="2">Method</th>
+            <th colspan="2" class="has-text-centered">Site A</th>
+            <th colspan="2" class="has-text-centered">Site B</th>
+            <th colspan="2" class="has-text-centered">Site C</th>
+            <th colspan="2" class="has-text-centered group-start">Overall</th>
+          </tr>
+          <tr class="sub">
+            <th>Med.&nbsp;ATE&darr;</th><th>R@5m&uarr;</th>
+            <th>Med.&nbsp;ATE&darr;</th><th>R@5m&uarr;</th>
+            <th>Med.&nbsp;ATE&darr;</th><th>R@5m&uarr;</th>
+            <th class="group-start">Mean / Med.&nbsp;ATE&darr;</th><th>R@1/3/5m&uarr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="oracle">
+            <td>Oracle <span class="note">(lower bound)</span></td>
+            <td>1.01</td><td>100.0</td><td>0.85</td><td>100.0</td><td>0.26</td><td>100.0</td>
+            <td class="group-start">1.12 / 0.85</td><td>60.6 / 93.9 / 100.0</td>
+          </tr>
+          <tr class="group-label"><td colspan="9">Unconstrained (no anchor)</td></tr>
+          <tr>
+            <td>SIFT + RANSAC<sup>*</sup></td>
+            <td>&ndash;</td><td>&ndash;</td><td>53.80</td><td>0.0</td><td>&ndash;</td><td>&ndash;</td>
+            <td class="group-start">53.80 / 53.80</td><td>0.0 / 0.0 / 0.0</td>
+          </tr>
+          <tr>
+            <td>RoMa + MatchAnything</td>
+            <td>16.12</td><td>31.6</td><td>42.41</td><td>0.0</td><td>42.44</td><td>0.0</td>
+            <td class="group-start">25.58 / 19.94</td><td>6.1 / 15.2 / 18.2</td>
+          </tr>
+          <tr>
+            <td>Shahbandi &amp; Magnusson<sup>&dagger;</sup></td>
+            <td>18.18</td><td>0.0</td><td>44.99</td><td>0.0</td><td>&ndash;</td><td>&ndash;</td>
+            <td class="group-start">29.57 / 24.94</td><td>0.0 / 0.0 / 0.0</td>
+          </tr>
+          <tr class="ours">
+            <td>Reading the Room (ours)</td>
+            <td><b>2.67</b></td><td><b>68.4</b></td><td><b>1.92</b></td><td><b>71.4</b></td><td><b>35.04</b></td><td>0.0</td>
+            <td class="group-start"><b>14.82 / 4.34</b></td><td><b>21.2 / 45.5 / 54.5</b></td>
+          </tr>
+          <tr class="group-label"><td colspan="9">With a single user-marked anchor</td></tr>
+          <tr>
+            <td>ICP + anchor</td>
+            <td>15.72</td><td>10.5</td><td>26.31</td><td>0.0</td><td>38.77</td><td>0.0</td>
+            <td class="group-start">24.26 / 21.59</td><td>0.0 / 3.0 / 6.1</td>
+          </tr>
+          <tr>
+            <td>Semantic ICP + anchor</td>
+            <td>13.40</td><td>26.3</td><td>11.23</td><td>14.3</td><td>37.60</td><td>0.0</td>
+            <td class="group-start">20.23 / 14.43</td><td>0.0 / 6.1 / 18.2</td>
+          </tr>
+          <tr class="ours">
+            <td>Reading the Room (ours) + anchor</td>
+            <td><b>1.41</b></td><td><b>89.5</b></td><td><b>0.90</b></td><td><b>85.7</b></td><td><b>4.37</b></td><td><b>57.1</b></td>
+            <td class="group-start"><b>4.46 / 1.89</b></td><td><b>18.2 / 63.6 / 81.8</b></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-notes">
+      <sup>*</sup> SIFT failed on 32 of the 33 runs; the one successful run (Site B) is shown.
+      <sup>&dagger;</sup> Produced a valid transform on 10 of the 33 runs (none on Site C), so its metrics cover only those runs.
+      The oracle fits the VSLAM trajectory directly to the ground truth. Its residual reflects the drift remaining in the
+      VSLAM map, and no rigid registration can do better.
+      Per-site mean ATE and ablation studies are in the <a href="static/pdfs/paper.pdf" target="_blank">paper</a>.
+    </p>
+  </div>
+</section>
+
+<!-- ============================== Paper ============================== -->
+<section class="section is-shaded" id="paper">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Paper</h2>
+    <div class="paper-box">
+      <a href="static/pdfs/paper.pdf" target="_blank" class="paper-thumb">
+        <img src="static/images/paper_thumb.jpg" alt="First page of the paper" loading="lazy">
+      </a>
+      <div>
+        <p class="paper-title">Reading the Room: Scale-ambiguous Semantic Registration of Sparse VSLAM Maps to Floor Plans in Partially Built Environments</p>
+        <p class="paper-authors">Bjorn Stragier, Emilia Szymańska, J. Micah Prendergast, Lukas Rosenberger Schmid</p>
+        <p class="paper-venue">Submitted to ICRA 2027 &middot; arXiv:2610.29647</p>
+        <div class="publication-links is-left">
+          <a href="static/pdfs/paper.pdf" target="_blank" class="button is-rounded is-dark">
+            <span class="icon"><i class="fas fa-file-pdf"></i></span><span>PDF</span>
+          </a>
+          <a href="https://arxiv.org/abs/2610.29647" target="_blank" class="button is-rounded is-dark">
+            <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== BibTeX ============================== -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop">
+    <div class="bibtex-header">
+      <h2 class="section-title">BibTeX</h2>
+      <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
+        <i class="fas fa-copy"></i>
+        <span class="copy-text">Copy</span>
+      </button>
+    </div>
+    <pre id="bibtex-code"><code>@article{stragier2026reading,
+  title   = {Reading the Room: Scale-ambiguous Semantic Registration of Sparse VSLAM Maps to Floor Plans in Partially Built Environments},
+  author  = {Stragier, Bjorn and Szyma{\'n}ska, Emilia and Prendergast, J. Micah and Schmid, Lukas Rosenberger},
+  journal = {arXiv preprint arXiv:2610.29647},
+  year    = {2026}
+}</code></pre>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="container is-max-desktop has-text-centered">
+    <p>
+      Built on the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>,
+      adapted from <a href="https://nerfies.github.io" target="_blank">Nerfies</a>.
+      Licensed under <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.
+    </p>
+  </div>
+</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lightbox-close" aria-label="Close"><i class="fas fa-times"></i></button>
+  <img alt="">
+  <p class="lightbox-caption"></p>
+</div>
+
+</body>
+</html>
